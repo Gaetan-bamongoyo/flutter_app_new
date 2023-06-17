@@ -1,5 +1,9 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:programmation/flutter_app_new/model/posts.dart';
+import 'package:programmation/flutter_app_new/screen/screen_detail_post.dart';
 
 class ScreenDashboard extends StatefulWidget {
   const ScreenDashboard({Key? key}) : super(key: key);
@@ -31,41 +35,99 @@ class _ScreenDashboardState extends State<ScreenDashboard> {
                 const SizedBox(
                   height: 10,
                 ),
-                Container(
-                  height: screenHeight * 0.15,
-                  width: screenWidth,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                          color: Colors.black, style: BorderStyle.solid)),
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    var maxHeight = constraints.minHeight;
-                    var maxWidth = constraints.maxWidth;
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                          leading: Image.asset(
-                        "assets/images/image2.jpg",
-                        height: screenHeight * 0.5,
-                        width: screenWidth * 0.2,
-                        fit: BoxFit.contain,
-                      )
-                          // Container(
-                          //   height: maxHeight,
-                          //   width: maxWidth * 0.2,
-                          //   decoration: BoxDecoration(
-                          //       borderRadius: BorderRadius.circular(12),
-                          //       border: Border.all(
-                          //           color: Colors.black, style: BorderStyle.solid)),
-                          // ),
-                          ),
+                Column(
+                  children: posts.map((e) {
+                    return ListPostWidget(
+                      screenHeight: screenHeight,
+                      screenWidth: screenWidth,
+                      post: e,
                     );
-                  }),
+                  }).toList(),
                 )
               ],
             ),
           ),
         ));
+  }
+}
+
+class ListPostWidget extends StatelessWidget {
+  const ListPostWidget(
+      {Key? key,
+      required this.screenHeight,
+      required this.screenWidth,
+      required this.post})
+      : super(key: key);
+
+  final double screenHeight;
+  final double screenWidth;
+  final Posts post;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: GestureDetector(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: ((context) {
+            return DetailPost(image: post.image,);
+          })));
+        },
+        child: Container(
+            height: screenHeight * 0.15,
+            width: screenWidth,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border:
+                    Border.all(color: Colors.black, style: BorderStyle.solid)),
+            child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      post.image,
+                      height: screenHeight * 0.15,
+                      width: screenWidth * 0.25,
+                      fit: BoxFit.cover,
+                    ),
+                    Container(
+                      height: screenHeight * 0.15,
+                      width: screenWidth * 0.35,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            post.description,
+                            maxLines: 2,
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                                fontFamily: 'roboto',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            post.date,
+                            style: TextStyle(
+                              fontFamily: 'roboto',
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () {},
+                        icon: FaIcon(
+                          FontAwesomeIcons.bell,
+                          color: Colors.black,
+                          size: 15,
+                        ))
+                  ],
+                ))),
+      ),
+    );
   }
 }
 
